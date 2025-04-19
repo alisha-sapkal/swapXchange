@@ -2,11 +2,12 @@ import React, { useEffect, useRef, useState } from 'react';
 import { NavLink, useLocation } from 'react-router-dom';
 import SidebarLinkGroup from './SidebarLinkGroup';
 import Logo from '../../images/logo/logo.svg';
-import { ChevronDown } from 'lucide-react';
+import { ChevronDown, Home, Users, Settings, BarChart2, FileText, Calendar } from 'lucide-react';
 import iconMap from './IconMap';
 import { useData } from '../../context/DataContext';
 import { axiosInstance } from '../../utils/config';
 import { useAuth } from '../../context/AuthContext';
+import { cn } from '../../lib/utils';
 
 interface SidebarProps {
   sidebarOpen: boolean;
@@ -83,136 +84,59 @@ const Sidebar = ({ sidebarOpen, setSidebarOpen }: SidebarProps) => {
     }
   };
 
+  const navigationItems = [
+    { name: 'Dashboard', href: '/', icon: Home },
+    { name: 'Users', href: '/users', icon: Users },
+    { name: 'Reports', href: '/reports', icon: BarChart2 },
+    { name: 'Documents', href: '/documents', icon: FileText },
+    { name: 'Calendar', href: '/calendar', icon: Calendar },
+    { name: 'Settings', href: '/settings', icon: Settings },
+  ];
+
   return (
     <aside
       ref={sidebar}
-      className={`absolute left-0 top-0 z-50 flex h-screen w-72.5 flex-col overflow-y-hidden bg-black duration-300 ease-linear dark:bg-boxdark lg:static lg:translate-x-0 ${
-        sidebarOpen ? 'translate-x-0' : '-translate-x-full'
-      }`}
+      className={cn(
+        'fixed left-0 top-0 z-50 flex h-screen w-64 flex-col border-r border-gray-200 bg-white dark:border-gray-800 dark:bg-gray-900',
+        sidebarOpen ? 'translate-x-0' : '-translate-x-full',
+        'lg:translate-x-0'
+      )}
     >
-      {/* <!-- SIDEBAR HEADER --> */}
-      <div className="flex items-center justify-between gap-2 px-6 py-5.5 lg:py-6.5">
-        <NavLink to="/">
-          <img src={Logo} alt="Logo" />
-        </NavLink>
-
-        <button
-          ref={trigger}
-          onClick={() => setSidebarOpen(!sidebarOpen)}
-          aria-controls="sidebar"
-          aria-expanded={sidebarOpen}
-          className="block lg:hidden"
-        >
-          <svg
-            className="fill-current"
-            width="20"
-            height="18"
-            viewBox="0 0 20 18"
-            fill="none"
-            xmlns="http://www.w3.org/2000/svg"
-          >
-            <path
-              d="M19 8.175H2.98748L9.36248 1.6875C9.69998 1.35 9.69998 0.825 9.36248 0.4875C9.02498 0.15 8.49998 0.15 8.16248 0.4875L0.399976 8.3625C0.0624756 8.7 0.0624756 9.225 0.399976 9.5625L8.16248 17.4375C8.31248 17.5875 8.53748 17.7 8.76248 17.7C8.98748 17.7 9.17498 17.625 9.36248 17.475C9.69998 17.1375 9.69998 16.6125 9.36248 16.275L3.02498 9.8625H19C19.45 9.8625 19.825 9.4875 19.825 9.0375C19.825 8.55 19.45 8.175 19 8.175Z"
-              fill=""
-            />
-          </svg>
-        </button>
+      <div className="flex h-16 items-center justify-center border-b border-gray-200 dark:border-gray-800">
+        <h1 className="text-xl font-bold text-gray-900 dark:text-white">SwapXchange</h1>
       </div>
-      {/* <!-- SIDEBAR HEADER --> */}
 
-      <div className="no-scrollbar flex flex-col overflow-y-auto duration-300 ease-linear">
-        {/* <!-- Sidebar Menu --> */}
-        <nav className="mt-5 py-4 px-4 lg:mt-9 lg:px-6">
-          {/* <!-- Menu Group --> */}
+      <nav className="flex-1 space-y-1 p-4">
+        {navigationItems.map((item) => {
+          const Icon = item.icon;
+          return (
+            <NavLink
+              key={item.name}
+              to={item.href}
+              className={({ isActive }) =>
+                cn(
+                  'flex items-center gap-3 rounded-lg px-3 py-2 text-sm font-medium transition-colors',
+                  isActive
+                    ? 'bg-gray-100 text-gray-900 dark:bg-gray-800 dark:text-white'
+                    : 'text-gray-600 hover:bg-gray-100 hover:text-gray-900 dark:text-gray-400 dark:hover:bg-gray-800 dark:hover:text-white'
+                )
+              }
+            >
+              <Icon className="h-5 w-5" />
+              {item.name}
+            </NavLink>
+          );
+        })}
+      </nav>
+
+      <div className="border-t border-gray-200 p-4 dark:border-gray-800">
+        <div className="flex items-center gap-3">
+          <div className="h-8 w-8 rounded-full bg-gray-200 dark:bg-gray-700" />
           <div>
-            <h3 className="mb-4 ml-4 text-sm font-semibold text-bodydark2">
-              MENU
-            </h3>
-
-            <ul className="mb-6 flex flex-col gap-1.5">
-              {rightsData.map((item, index) => {
-                if (item.links.length > 1) {
-                  return (
-                    <SidebarLinkGroup
-                      key={index}
-                      activeCondition={
-                        pathname === '/forms' || pathname.includes('forms')
-                      }
-                    >
-                      {(handleClick, open) => {
-                        return (
-                          <React.Fragment>
-                            <NavLink
-                              to="#"
-                              className={`group relative flex items-center gap-2.5 rounded-sm py-2 px-4 font-medium text-bodydark1 duration-300 ease-in-out hover:bg-graydark dark:hover:bg-meta-4 ${
-                                (pathname === '/forms' ||
-                                  pathname.includes('forms')) &&
-                                'bg-graydark dark:bg-meta-4'
-                              }`}
-                              onClick={(e) => {
-                                e.preventDefault();
-                                sidebarExpanded
-                                  ? handleClick()
-                                  : setSidebarExpanded(true);
-                              }}
-                            >
-                              {iconMap[item.icon]}
-                              {item.title}
-                              <ChevronDown
-                                className={`absolute right-4 top-1/2 -translate-y-1/2 ${
-                                  open && 'rotate-180'
-                                }`}
-                              />
-                            </NavLink>
-                            {/* <!-- Dropdown Menu Start --> */}
-                            <div
-                              className={`translate transform overflow-hidden ${
-                                !open && 'hidden'
-                              }`}
-                            >
-                              <ul className="mt-4 mb-5.5 flex flex-col gap-2.5 pl-6">
-                                {item.links.map((link, index) => (
-                                  <li key={index}>
-                                    <NavLink
-                                      to={link.to}
-                                      className={({ isActive }) =>
-                                        'group relative flex items-center gap-2.5 rounded-md px-4 font-medium text-bodydark2 duration-300 ease-in-out hover:text-white ' +
-                                        (isActive && '!text-white')
-                                      }
-                                    >
-                                      {link.title}
-                                    </NavLink>
-                                  </li>
-                                ))}
-                              </ul>
-                            </div>
-                            {/* <!-- Dropdown Menu End --> */}
-                          </React.Fragment>
-                        );
-                      }}
-                    </SidebarLinkGroup>
-                  );
-                } else {
-                  return (
-                    <li key={index}>
-                      <NavLink
-                        to={item.links[0].to}
-                        className={`group relative flex items-center gap-2.5 rounded-sm py-2 px-4 font-medium text-bodydark1 duration-300 ease-in-out hover:bg-graydark dark:hover:bg-meta-4 ${
-                          pathname.includes('settings') &&
-                          'bg-graydark dark:bg-meta-4'
-                        }`}
-                      >
-                        {iconMap[item.icon]}
-                        {item.links[0].title}
-                      </NavLink>
-                    </li>
-                  );
-                }
-              })}
-            </ul>
+            <p className="text-sm font-medium text-gray-900 dark:text-white">John Doe</p>
+            <p className="text-xs text-gray-500 dark:text-gray-400">Admin</p>
           </div>
-        </nav>
-        {/* <!-- Sidebar Menu --> */}
+        </div>
       </div>
     </aside>
   );

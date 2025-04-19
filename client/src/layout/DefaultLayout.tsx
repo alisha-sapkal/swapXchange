@@ -7,7 +7,7 @@ import { useData } from '../context/DataContext';
 import { useOutlet } from 'react-router-dom';
 
 const DefaultLayout: React.FC = () => {
-  const [sidebarOpen, setSidebarOpen] = useState(false);
+  const [sidebarOpen, setSidebarOpen] = useState(true);
   const { chapterData, allChaptersData, switchChapter } = useData();
   const { isAuthenticated } = useAuth();
   const currentOutlet = useOutlet();
@@ -55,9 +55,7 @@ const DefaultLayout: React.FC = () => {
       {/* <!-- ===== Page Wrapper Start ===== --> */}
       <div className="flex h-screen overflow-hidden">
         {/* <!-- ===== Sidebar Start ===== --> */}
-        {isAuthenticated && (
-          <Sidebar sidebarOpen={sidebarOpen} setSidebarOpen={setSidebarOpen} />
-        )}
+        <Sidebar sidebarOpen={sidebarOpen} setSidebarOpen={setSidebarOpen} />
         {/* <!-- ===== Sidebar End ===== --> */}
 
         {/* <!-- ===== Content Area Start ===== --> */}
