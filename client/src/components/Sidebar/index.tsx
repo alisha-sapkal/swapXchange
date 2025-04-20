@@ -85,11 +85,11 @@ const Sidebar = ({ sidebarOpen, setSidebarOpen }: SidebarProps) => {
   };
 
   const navigationItems = [
-    { name: 'Dashboard', href: '/', icon: Home },
-    { name: 'Users', href: '/users', icon: Users },
-    { name: 'Reports', href: '/reports', icon: BarChart2 },
-    { name: 'Documents', href: '/documents', icon: FileText },
-    { name: 'Calendar', href: '/calendar', icon: Calendar },
+    { name: 'Problem', href: '/', icon: Home },
+    { name: 'How it works?', href: '/how-it-works', icon: Users },
+    { name: 'Why us?', href: '/why-us', icon: BarChart2 },
+    { name: 'Testimonials', href: '/testimonials', icon: FileText },
+    { name: 'FAQs', href: '/faqs', icon: Calendar },
     { name: 'Settings', href: '/settings', icon: Settings },
   ];
 
