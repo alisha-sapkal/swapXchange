@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { toast } from 'react-toastify';
-import signUp from '../../assets/signUp.png';
+import signUp from '../../assets/signUp.svg';
 import signUpBG from '../../assets/signUpBG.png';
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
@@ -76,28 +76,29 @@ const LoginSignup = () => {
     setLoading(true);
 
     try {
-      const response = await fetch('http://localhost:3000/api/auth/signup', {
+      const response = await fetch('http://localhost:3000/api/auth/register', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({
-          name: formData.fullname,
+          fullName: formData.fullname,
           username: formData.username,
-          password: formData.password
+          password: formData.password,
+          confirmPassword: formData.confirmPassword
         }),
       });
 
       const data = await response.json();
 
       if (!response.ok) {
-        throw new Error(data.message || 'Signup failed');
+        throw new Error(data.message || 'Registration failed');
       }
 
       toast.success('Account created successfully!');
       setIsLogin(true);
     } catch (error) {
-      toast.error(error.message || 'An error occurred during signup');
+      toast.error(error.message || 'An error occurred during registration');
     } finally {
       setLoading(false);
     }
@@ -173,7 +174,7 @@ const LoginSignup = () => {
             )}
             {isLogin && (
               <div className="flex justify-between items-center mb-4">
-                <Label className="flex items-center gap-2 text-sm">
+                <Label className="flex items-center text-black gap-2 text-sm">
                   <Checkbox
                     id="remember"
                     name="rememberMe"
@@ -192,7 +193,7 @@ const LoginSignup = () => {
                   Please wait
                 </>
               ) : (
-                isLogin ? 'Login' : 'Sign Up'
+                isLogin ? 'Login' : 'Register'
               )}
             </Button>
             <p className="text-sm text-center mt-4">
@@ -204,7 +205,7 @@ const LoginSignup = () => {
                     onClick={() => setIsLogin(false)}
                     className="text-blue-600 font-medium hover:underline"
                   >
-                    Sign Up
+                    Register
                   </button>
                 </>
               ) : (

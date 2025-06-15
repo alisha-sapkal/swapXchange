@@ -9,6 +9,7 @@ import { useEffect, useState } from 'react';
 import DefaultLayout from './layout/DefaultLayout';
 import Home from './pages/Home/Home';
 import Login from './pages/Authentication/Login'
+import HowItWorks from './pages/Home/HowItWorks';
 
 // Temporarily disabled protected route for development
 const ProtectedRoute = ({ children }: { children: React.ReactNode }) => {
@@ -41,6 +42,10 @@ const router = createBrowserRouter([
         path: 'home',
         element: <Home />,
       },
+      {
+        path: 'how-it-works',
+        element: <HowItWorks />,
+      },
     ],
   },
 ]);
@@ -65,7 +70,7 @@ function App() {
         pauseOnFocusLoss
         draggable
         pauseOnHover
-        theme="light"
+        theme="dark"
         transition={Bounce}
       />
     </>

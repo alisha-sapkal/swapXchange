@@ -2,7 +2,7 @@ import React, { useEffect, useRef, useState } from 'react';
 import { NavLink, useLocation } from 'react-router-dom';
 import SidebarLinkGroup from './SidebarLinkGroup';
 import Logo from '../../images/logo/logo.svg';
-import { ChevronDown, Home, Users, Settings, BarChart2, FileText, Calendar } from 'lucide-react';
+import { Bug, Lightbulb, BadgeCheck, MessageSquare, HelpCircle, Settings } from 'lucide-react';
 import iconMap from './IconMap';
 import { useData } from '../../context/DataContext';
 import { axiosInstance } from '../../utils/config';
@@ -85,11 +85,11 @@ const Sidebar = ({ sidebarOpen, setSidebarOpen }: SidebarProps) => {
   };
 
   const navigationItems = [
-    { name: 'Problem', href: '/', icon: Home },
-    { name: 'How it works?', href: '/how-it-works', icon: Users },
-    { name: 'Why us?', href: '/why-us', icon: BarChart2 },
-    { name: 'Testimonials', href: '/testimonials', icon: FileText },
-    { name: 'FAQs', href: '/faqs', icon: Calendar },
+    { name: 'Problem', href: '/home', icon: Bug },
+    { name: 'How it works?', href: '/how-it-works', icon: Lightbulb },
+    { name: 'Why us?', href: '/why-us', icon: BadgeCheck },
+    { name: 'Testimonials', href: '/testimonials', icon: MessageSquare },
+    { name: 'FAQs', href: '/faqs', icon: HelpCircle },
     { name: 'Settings', href: '/settings', icon: Settings },
   ];
 

@@ -1,4 +1,4 @@
-import React, { useState, ReactNode, useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
 import Header from '../components/Header/index';
 import Sidebar from '../components/Sidebar/index';
 import { useAuth } from '../context/AuthContext';
@@ -11,7 +11,6 @@ const DefaultLayout: React.FC = () => {
   const { chapterData, allChaptersData, switchChapter } = useData();
   const { isAuthenticated } = useAuth();
   const currentOutlet = useOutlet();
-
   const [backDropOpen, setBackDropOpen] = useState(false);
 
   useEffect(() => {
@@ -23,58 +22,51 @@ const DefaultLayout: React.FC = () => {
   }, [chapterData, allChaptersData, isAuthenticated]);
 
   return (
-    <div className="dark:bg-boxdark-2 dark:text-bodydark">
-      {/* choose chapter */}
-      <Backdrop
-        sx={{ color: '#fff', zIndex: (theme) => theme.zIndex.drawer + 1 }}
-        open={backDropOpen}
-        onClick={() => {}}
-      >
-        {/* choose chapter using cards */}
-        <div className="w-64 bg-white dark:bg-boxdark">
-          <div className="flex items-center justify-between px-4 py-4 border-b border-stroke dark:border-strokedark">
-            <h1 className="text-lg font-bold text-black">Chapters</h1>
-          </div>
-          <div className="p-4">
-            {allChaptersData?.map((chapter) => (
-              <button
-                key={chapter.chapterId}
-                onClick={() => {
-                  switchChapter(chapter.chapterId);
-                  setBackDropOpen(false);
-                }}
-                className="block text-black w-full p-2 py-5 my-2 rounded-md bg-gray-300 dark:bg-boxdark dark:hover:bg-gray-800"
-              >
-                {chapter.chapterName} - {chapter.organisationName}
-              </button>
-            ))}
-          </div>
-        </div>
-      </Backdrop>
-
-      {/* <!-- ===== Page Wrapper Start ===== --> */}
-      <div className="flex h-screen overflow-hidden">
-        {/* <!-- ===== Sidebar Start ===== --> */}
+    <div className="dark:bg-boxdark-2 dark:text-bodydark h-screen flex">
+      
+      {/* === Fixed Sidebar === */}
+      <div className="w-64 h-full fixed left-0 top-0 bg-gray-800 z-20">
         <Sidebar sidebarOpen={sidebarOpen} setSidebarOpen={setSidebarOpen} />
-        {/* <!-- ===== Sidebar End ===== --> */}
-
-        {/* <!-- ===== Content Area Start ===== --> */}
-        <div className="relative flex flex-1 flex-col overflow-y-auto overflow-x-hidden">
-          {/* <!-- ===== Header Start ===== --> */}
-          <Header sidebarOpen={sidebarOpen} setSidebarOpen={setSidebarOpen} />
-          {/* <!-- ===== Header End ===== --> */}
-
-          {/* <!-- ===== Main Content Start ===== --> */}
-          <main>
-            <div className="mx-auto max-w-screen-2xl p-4 md:p-6 2xl:p-10">
-              {currentOutlet}
-            </div>
-          </main>
-          {/* <!-- ===== Main Content End ===== --> */}
-        </div>
-        {/* <!-- ===== Content Area End ===== --> */}
       </div>
-      {/* <!-- ===== Page Wrapper End ===== --> */}
+
+      {/* === Content Area === */}
+      <div className="flex-1 ml-64 flex flex-col overflow-y-auto">
+        
+        {/* === Backdrop for chapter selection === */}
+        <Backdrop
+          sx={{ color: '#fff', zIndex: (theme) => theme.zIndex.drawer + 10 }}
+          open={backDropOpen}
+          onClick={() => {}}
+        >
+          <div className="w-64 bg-white dark:bg-boxdark">
+            <div className="flex items-center justify-between px-4 py-4 border-b border-stroke dark:border-strokedark">
+              <h1 className="text-lg font-bold text-black dark:text-white">Chapters</h1>
+            </div>
+            <div className="p-4">
+              {allChaptersData?.map((chapter) => (
+                <button
+                  key={chapter.chapterId}
+                  onClick={() => {
+                    switchChapter(chapter.chapterId);
+                    setBackDropOpen(false);
+                  }}
+                  className="block text-black dark:text-white w-full p-2 py-5 my-2 rounded-md bg-gray-300 dark:bg-boxdark dark:hover:bg-gray-800"
+                >
+                  {chapter.chapterName} - {chapter.organisationName}
+                </button>
+              ))}
+            </div>
+          </div>
+        </Backdrop>
+
+        {/* === Header === */}
+        <Header sidebarOpen={sidebarOpen} setSidebarOpen={setSidebarOpen} />
+
+        {/* === Main Content === */}
+        <main className="p-4 md:p-6 2xl:p-10">
+          {currentOutlet}
+        </main>
+      </div>
     </div>
   );
 };
