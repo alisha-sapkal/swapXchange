@@ -6,7 +6,7 @@ import solution from "@/assets/solution.png";
 
 const Home = () => {
   return (
-    <div className="bg-blue-50 dark:bg-gray-900 text-gray-900 dark:bg-gradient from-blue-50 to-gray-50 dark:text-white p-8 flex flex-col md:flex-row items-center justify-center gap-12 min-h-screen">
+    <div className="bg-blue-50 dark:bg-gray-950 text-gray-900 dark:bg-gradient from-blue-50 to-gray-50 dark:text-white p-8 flex flex-col md:flex-row items-center justify-center gap-12 min-h-screen">
       <div className="flex-1 max-w-md">
         <h2 className="text-3xl md:text-4xl font-bold mb-4">The Problem with P2P</h2>
         <p className="mb-6">
