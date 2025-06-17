@@ -11,6 +11,7 @@ import Home from './pages/Home/Home';
 import Login from './pages/Authentication/Login'
 import HowItWorks from './pages/Home/HowItWorks';
 import WhyUs from './pages/Home/WhyUs'
+import Testimonials from './pages/Home/Testimonials';
 
 // Temporarily disabled protected route for development
 const ProtectedRoute = ({ children }: { children: React.ReactNode }) => {
@@ -50,6 +51,10 @@ const router = createBrowserRouter([
       {
         path: 'why-us',
         element: <WhyUs/>,
+      },
+      {
+        path: '/testimonials',
+        element: <Testimonials/>
       }
     ],
   },
