@@ -4,67 +4,71 @@ import Sidebar from '../components/Sidebar/index';
 import { useAuth } from '../context/AuthContext';
 import { Backdrop } from '@mui/material';
 import { useData } from '../context/DataContext';
-import { useOutlet } from 'react-router-dom';
+import { useOutlet, Outlet } from 'react-router-dom';
+import { cn } from '../lib/utils';
+import { useTheme } from '../context/theme-provider';
 
 const DefaultLayout: React.FC = () => {
-  const [sidebarOpen, setSidebarOpen] = useState(true);
-  const { chapterData, allChaptersData, switchChapter } = useData();
+  const [sidebarOpen, setSidebarOpen] = useState(false);
   const { isAuthenticated } = useAuth();
   const currentOutlet = useOutlet();
   const [backDropOpen, setBackDropOpen] = useState(false);
+  const [isMobile, setIsMobile] = useState(false);
+  const { theme } = useTheme();
+
 
   useEffect(() => {
-    if (isAuthenticated) {
-      if (!chapterData && allChaptersData && allChaptersData.length > 1) {
-        setBackDropOpen(true);
+    const handleResize = () => {
+      const mobile = window.innerWidth < 1024; 
+      setIsMobile(mobile);
+      if (mobile) {
+        setSidebarOpen(false);
       }
-    }
-  }, [chapterData, allChaptersData, isAuthenticated]);
+    };
+    window.addEventListener('resize', handleResize);
+
+    handleResize();
+
+    return () => window.removeEventListener('resize', handleResize);
+  }, []);
+
+  const handleSidebarToggle = (open: boolean) => {
+    console.log('Setting sidebar to:', open);
+    setSidebarOpen(open);
+  };
 
   return (
-    <div className="dark:bg-boxdark-2 dark:text-bodydark h-screen flex">
-      
-      {/* === Fixed Sidebar === */}
-      <div className="w-64 h-full fixed left-0 top-0 bg-gray-800 z-20">
-        <Sidebar sidebarOpen={sidebarOpen} setSidebarOpen={setSidebarOpen} />
-      </div>
+    <div className={cn(
+      "flex h-screen overflow-hidden",
+      theme === 'dark' ? 'dark' : ''
+    )}>
+      <div
+        className={cn(
+          'fixed inset-0 z-40 bg-black/50 transition-opacity duration-300 lg:hidden',
+          sidebarOpen ? 'opacity-100' : 'opacity-0 pointer-events-none'
+        )}
+        onClick={() => handleSidebarToggle(false)}
+      />
 
-      {/* === Content Area === */}
-      <div className="flex-1 ml-64 flex flex-col overflow-y-auto">
-        
-        {/* === Backdrop for chapter selection === */}
-        <Backdrop
-          sx={{ color: '#fff', zIndex: (theme) => theme.zIndex.drawer + 10 }}
-          open={backDropOpen}
-          onClick={() => {}}
-        >
-          <div className="w-64 bg-white dark:bg-boxdark">
-            <div className="flex items-center justify-between px-4 py-4 border-b border-stroke dark:border-strokedark">
-              <h1 className="text-lg font-bold text-black dark:text-white">Chapters</h1>
-            </div>
-            <div className="p-4">
-              {allChaptersData?.map((chapter) => (
-                <button
-                  key={chapter.chapterId}
-                  onClick={() => {
-                    switchChapter(chapter.chapterId);
-                    setBackDropOpen(false);
-                  }}
-                  className="block text-black dark:text-white w-full p-2 py-5 my-2 rounded-md bg-gray-300 dark:bg-boxdark dark:hover:bg-gray-800"
-                >
-                  {chapter.chapterName} - {chapter.organisationName}
-                </button>
-              ))}
-            </div>
-          </div>
-        </Backdrop>
+      <aside
+        className={cn(
+          'fixed lg:relative inset-y-0 left-0 z-50 transition-all duration-300 bg-white dark:bg-gray-900 border-r border-gray-200 dark:border-gray-800',
+          sidebarOpen ? 'w-64 translate-x-0' : '-translate-x-full lg:translate-x-0 lg:w-20'
+        )}
+      >
+        <Sidebar sidebarOpen={sidebarOpen} setSidebarOpen={handleSidebarToggle} />
+      </aside>
 
-        {/* === Header === */}
-        <Header sidebarOpen={sidebarOpen} setSidebarOpen={setSidebarOpen} />
+      <div className={cn(
+        "flex-1 flex flex-col min-h-screen transition-all duration-300",
+        sidebarOpen ? 'lg:ml-64' : 'lg:ml-20'
+      )}>
+        <header className="sticky top-0 z-30 w-full bg-white dark:bg-gray-900 border-b border-gray-200 dark:border-gray-800">
+          <Header sidebarOpen={sidebarOpen} setSidebarOpen={handleSidebarToggle} />
+        </header>
 
-        {/* === Main Content === */}
-        <main className="p-4 md:p-6 2xl:p-10">
-          {currentOutlet}
+        <main className="flex-1 overflow-y-auto bg-white dark:bg-gray-950 p-4">
+          <Outlet />
         </main>
       </div>
     </div>

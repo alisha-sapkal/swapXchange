@@ -1,144 +1,140 @@
-import React, { useEffect, useRef, useState } from 'react';
-import { NavLink, useLocation } from 'react-router-dom';
-import SidebarLinkGroup from './SidebarLinkGroup';
-import Logo from '../../images/logo/logo.svg';
+import React, { useState } from 'react';
+import { Link, useLocation } from 'react-router-dom';
+import { useAuth } from "../../context/AuthContext";
+import { cn } from "../../lib/utils";
 import { Bug, Lightbulb, BadgeCheck, MessageSquare, HelpCircle, Settings } from 'lucide-react';
-import iconMap from './IconMap';
-import { useData } from '../../context/DataContext';
-import { axiosInstance } from '../../utils/config';
-import { useAuth } from '../../context/AuthContext';
-import { cn } from '../../lib/utils';
+import Logo from '../../../dist/favicon.ico';
 
 interface SidebarProps {
   sidebarOpen: boolean;
-  setSidebarOpen: (arg: boolean) => void;
+  setSidebarOpen: (open: boolean) => void;
 }
 
+const navigationItems = [
+  {
+    name: 'Problems',
+    href: '/home',
+    icon: Lightbulb
+  },
+  {
+    name: 'How it works',
+    href: '/how-it-works',
+    icon: Bug
+  },
+  {
+    name: 'Why Us',
+    href: '/why-us',
+    icon: MessageSquare
+  },
+  {
+    name: 'Testimonials',
+    href: '/testimonials',
+    icon: BadgeCheck
+  },
+  {
+    name: 'FAQs',
+    href: '/faqs',
+    icon: HelpCircle
+  },
+  {
+    name: 'Settings',
+    href: '/settings',
+    icon: Settings
+  }
+];
+
 const Sidebar = ({ sidebarOpen, setSidebarOpen }: SidebarProps) => {
-  const { chapterData } = useData();
-  const { isAuthenticated } = useAuth();
-  const [rightsData, setRightsData] = useState<any>([]);
+  const { user, isAuthenticated } = useAuth();
   const location = useLocation();
-  const { pathname } = location;
-
-  const trigger = useRef<any>(null);
-  const sidebar = useRef<any>(null);
-
-  const storedSidebarExpanded = localStorage.getItem('sidebar-expanded');
-  const [sidebarExpanded, setSidebarExpanded] = useState(
-    storedSidebarExpanded === null ? false : storedSidebarExpanded === 'true',
-  );
-
-  // close on click outside
-  useEffect(() => {
-    const clickHandler = ({ target }: MouseEvent) => {
-      if (!sidebar.current || !trigger.current) return;
-      if (
-        !sidebarOpen ||
-        sidebar.current.contains(target) ||
-        trigger.current.contains(target)
-      )
-        return;
-      setSidebarOpen(false);
-    };
-    document.addEventListener('click', clickHandler);
-    return () => document.removeEventListener('click', clickHandler);
-  });
-
-  // close if the esc key is pressed
-  useEffect(() => {
-    const keyHandler = ({ keyCode }: KeyboardEvent) => {
-      if (!sidebarOpen || keyCode !== 27) return;
-      setSidebarOpen(false);
-    };
-    document.addEventListener('keydown', keyHandler);
-    return () => document.removeEventListener('keydown', keyHandler);
-  });
-
-  useEffect(() => {
-    localStorage.setItem('sidebar-expanded', sidebarExpanded.toString());
-    if (sidebarExpanded) {
-      document.querySelector('body')?.classList.add('sidebar-expanded');
-    } else {
-      document.querySelector('body')?.classList.remove('sidebar-expanded');
-    }
-  }, [sidebarExpanded]);
-
-  useEffect(() => {
-    if (chapterData?.chapterId) getRightData();
-  }, [chapterData]);
-
-  console.log({ rightsData });
-
-  const getRightData = async () => {
-    try {
-      const response = await axiosInstance(`/api/rights/sidebar`, {
-        params: {
-          chapterId: chapterData?.chapterId,
-        },
-      });
-      const data = await response.data;
-      setRightsData(data);
-    } catch (error) {
-      console.error('Fetching chapter details failed:', error);
-    }
-  };
-
-  const navigationItems = [
-    { name: 'Problem', href: '/home', icon: Bug },
-    { name: 'How it works?', href: '/how-it-works', icon: Lightbulb },
-    { name: 'Why us?', href: '/why-us', icon: BadgeCheck },
-    { name: 'Testimonials', href: '/testimonials', icon: MessageSquare },
-    { name: 'FAQs', href: '/faqs', icon: HelpCircle },
-    { name: 'Settings', href: '/settings', icon: Settings },
-  ];
+  const [collapsed, setCollapsed] = useState(false);
 
   return (
-    <aside
-      ref={sidebar}
-      className={cn(
-        'fixed left-0 top-0 z-50 flex h-screen w-64 flex-col border-r border-gray-200 bg-white dark:border-gray-800 dark:bg-gray-900',
-        sidebarOpen ? 'translate-x-0' : '-translate-x-full',
-        'lg:translate-x-0'
-      )}
-    >
-      <div className="flex h-16 items-center justify-center border-b border-gray-200 dark:border-gray-800">
-        <h1 className="text-xl font-bold text-gray-900 dark:text-white">SwapXchange</h1>
+    <div className={`flex h-full flex-col bg-gradient-to-b from-gray-950 to-blue-950 transition-all duration-300 ${
+      collapsed ? 'w-20' : 'w-64'
+    }`}>
+      <div className="flex h-16 items-center justify-between px-4 border-b border-gray-700/50">
+        <Link to="/" className="flex items-center gap-2">
+          <div className="h-8 w-8 rounded-full bg-white/10 flex items-center justify-center">
+            <img src={Logo} alt='Logo' className="h-6 w-6"/>
+          </div>
+          {!collapsed && (
+            <span className="text-xl font-semibold text-white">
+              SwapXchange
+            </span>
+          )}
+        </Link>
+        <button
+          onClick={() => setCollapsed(!collapsed)}
+          className="hidden lg:flex h-8 w-8 items-center justify-center rounded-lg hover:bg-white/10"
+        >
+          <svg
+            className={`h-5 w-5 text-white/70 transition-transform duration-300 ${
+              collapsed ? 'rotate-180' : ''
+            }`}
+            fill="none"
+            viewBox="0 0 24 24"
+            stroke="currentColor"
+          >
+            <path
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              strokeWidth={2}
+              d="M9 5l7 7-7 7"
+            />
+          </svg>
+        </button>
       </div>
 
-      <nav className="flex-1 space-y-1 p-4">
-        {navigationItems.map((item) => {
-          const Icon = item.icon;
-          return (
-            <NavLink
+      <div className="flex flex-col flex-1">
+        <nav className="flex-1 space-y-1 px-2 py-4">
+          {navigationItems.map((item) => (
+            <Link
               key={item.name}
               to={item.href}
-              className={({ isActive }) =>
-                cn(
-                  'flex items-center gap-3 rounded-lg px-3 py-2 text-sm font-medium transition-colors',
-                  isActive
-                    ? 'bg-gray-100 text-gray-900 dark:bg-gray-800 dark:text-white'
-                    : 'text-gray-600 hover:bg-gray-100 hover:text-gray-900 dark:text-gray-400 dark:hover:bg-gray-800 dark:hover:text-white'
-                )
-              }
+              className={cn(
+                'group flex items-center rounded-lg px-3 py-2 text-sm font-medium transition-colors text-white hover:bg-white/10',
+                location.pathname === item.href
+                    ? 'text-white'
+                    : 'text-white/70 group-hover:text-white',
+                collapsed ? 'justify-center' : ''
+              )}
             >
-              <Icon className="h-5 w-5" />
-              {item.name}
-            </NavLink>
-          );
-        })}
-      </nav>
+              <item.icon
+                className={cn(
+                  'h-5 w-5 flex-shrink-0',
+                  location.pathname === item.href
+                    ? 'text-white'
+                    : 'text-white/70 group-hover:text-white'
+                )}
+              />
+              {!collapsed && <span className="ml-3">{item.name}</span>}
+            </Link>
+          ))}
+        </nav>
 
-      <div className="border-t border-gray-200 p-4 dark:border-gray-800">
-        <div className="flex items-center gap-3">
-          <div className="h-8 w-8 rounded-full bg-gray-200 dark:bg-gray-700" />
-          <div>
-            <p className="text-sm font-medium text-gray-900 dark:text-white">John Doe</p>
-            <p className="text-xs text-gray-500 dark:text-gray-400">Admin</p>
+        {isAuthenticated && user && (
+          <div className="mt-auto border-t border-gray-700/50 p-4">
+            <div className="flex items-center gap-3">
+              <div className="h-10 w-10 rounded-full bg-white/10 flex items-center justify-center">
+                <span className="text-white font-medium">
+                  {user.fullName?.[0]?.toUpperCase() || 'U'}
+                </span>
+              </div>
+              {!collapsed && (
+                <div className="min-w-0">
+                  <p className="text-sm font-medium text-white truncate">
+                    {user.fullName || 'User'}
+                  </p>
+                  <p className="text-xs text-white/70 truncate">
+                    {user.email || 'user@example.com'}
+                  </p>
+                </div>
+              )}
+            </div>
           </div>
-        </div>
+        )}
       </div>
-    </aside>
+    </div>
   );
 };
 

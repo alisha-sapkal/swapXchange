@@ -10,6 +10,7 @@ import DefaultLayout from './layout/DefaultLayout';
 import Home from './pages/Home/Home';
 import Login from './pages/Authentication/Login'
 import HowItWorks from './pages/Home/HowItWorks';
+import WhyUs from './pages/Home/WhyUs'
 
 // Temporarily disabled protected route for development
 const ProtectedRoute = ({ children }: { children: React.ReactNode }) => {
@@ -46,6 +47,10 @@ const router = createBrowserRouter([
         path: 'how-it-works',
         element: <HowItWorks />,
       },
+      {
+        path: 'why-us',
+        element: <WhyUs/>,
+      }
     ],
   },
 ]);

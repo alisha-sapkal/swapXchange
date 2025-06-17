@@ -37,20 +37,20 @@ const HowItWorks = () => {
   }, []);
 
   return (
-    <div className="bg-gray-900 text-white py-10 px-4 md:px-20">
+    <div className="bg-blue-50 dark:bg-gray-900 text-gray-900 dark:bg-gradient from-blue-50 to-gray-50 dark:text-white p-8 flex flex-col items-center justify-center gap-5 min-h-screen">
       <h2 className="text-3xl font-bold text-center mb-4">How It Works</h2>
-      <p className="text-center text-gray-400 mb-12">
+      <p className="text-center text-gray-800 dark:text-gray-400 mb-12">
         A simple, secure 3-step process to guarantee safety for both buyers and sellers.
       </p>
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
         {steps.map((step) => (
           <div
             key={step.id}
-            className="bg-gray-800 p-6 rounded-xl shadow-lg border-t-4 border-blue-500"
+            className="dark:bg-gray-800 bg-blue-200 p-6 rounded-xl shadow-lg border-t-4 border-gray-500 dark:border-blue-500"
           >
             <div className="text-4xl mb-4">{step.icon}</div>
             <h3 className="text-xl font-semibold mb-2">{step.id}. {step.title}</h3>
-            <p className="text-gray-300">{step.description}</p>
+            <p className="dark:text-gray-300 text-gray-800">{step.description}</p>
           </div>
         ))}
       </div>
